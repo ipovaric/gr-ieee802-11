@@ -10,7 +10,7 @@ pdr.pdf: plot.py results/all.csv
 	python ./plot.py
 
 sim.py: sim.grc
-	grcc -d . sim.grc
+	grcc sim.grc
 
 results/all.csv: $(PCAPFILES)
 	./parse.sh
