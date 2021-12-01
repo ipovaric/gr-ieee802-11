@@ -17,8 +17,10 @@
 #include "chunks_to_symbols_impl.h"
 #include "utils.h"
 #include <gnuradio/io_signature.h>
-#include <gnuradio/tag_checker.h>
+//#include <gnuradio/tag_checker.h>
+#include "tag_checker.h"
 #include <assert.h>
+
 
 using namespace gr::ieee802_11;
 
