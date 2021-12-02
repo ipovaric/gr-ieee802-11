@@ -1,7 +1,7 @@
 SHELL=/bin/bash
 MESSAGES=100
 
-PCAPFILES=$(shell python -c 'import itertools; import numpy as np; print(" ".join(["results/sim_%d_%.1f_%s_.pcap" % x for x in itertools.product(range(20), np.arange(0,12,0.5), ["ofdm", "noise"])]))')
+PCAPFILES=$(shell python3 -c 'import itertools; import numpy as np; print(" ".join(["results/sim_%d_%.1f_%s_.pcap" % x for x in itertools.product(range(20), np.arange(0,12,0.5), ["ofdm", "noise"])]))')
 
 all: pdr.pdf
 

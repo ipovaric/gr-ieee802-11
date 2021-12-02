@@ -1,37 +1,42 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-##################################################
+
+#
+# SPDX-License-Identifier: GPL-3.0
+#
 # GNU Radio Python Flow Graph
 # Title: Sim
-# Generated: Thu Oct 12 12:33:05 2017
-##################################################
-import threading
-
+# GNU Radio version: v3.10.0.0git-520-g4d0f2900
 
 import os
 import sys
 sys.path.append(os.environ.get('GRC_HIER_PATH', os.path.expanduser('~/.grc_gnuradio')))
 
-from argparse import ArgumentParser
 from gnuradio import analog
 from gnuradio import blocks
-from gnuradio import eng_notation
 from gnuradio import gr
-from gnuradio.eng_arg import eng_float, intx
 from gnuradio.filter import firdes
+from gnuradio.fft import window
+import signal
+from argparse import ArgumentParser
+from gnuradio.eng_arg import eng_float, intx
+from gnuradio import eng_notation
 from gnuradio.filter import pfb
 from wifi_phy_hier import wifi_phy_hier  # grc-generated hier_block
 import foo
+import pmt
 import ieee802_11
 import math
-import pmt
 import random
+import threading
+
+
 
 
 class sim(gr.top_block):
 
     def __init__(self, encoding=2, interference="ofdm", interval=50, messages=50, repetition=23, size=546, snr=20):
-        gr.top_block.__init__(self, "Sim")
+        gr.top_block.__init__(self, "Sim", catch_exceptions=True)
 
         self._lock = threading.RLock()
 
@@ -72,35 +77,33 @@ class sim(gr.top_block):
             sensitivity=0.56,
         )
         self.pfb_arb_resampler_xxx_0_0 = pfb.arb_resampler_ccf(
-        	  1 + 15e-6,
-                  taps=None,
-        	  flt_size=32)
+            1 + 15e-6,
+            taps=None,
+            flt_size=32)
         self.pfb_arb_resampler_xxx_0_0.declare_sample_delay(0)
-
         self.pfb_arb_resampler_xxx_0 = pfb.arb_resampler_ccf(
-        	  1 + 15e-6,
-                  taps=None,
-        	  flt_size=32)
+            1 + 15e-6,
+            taps=None,
+            flt_size=32)
         self.pfb_arb_resampler_xxx_0.declare_sample_delay(0)
-
-        self.ieee802_11_mac_0_0 = ieee802_11.mac(([0x12, 0x12, 0x12, 0x12, 0x12, 0x12]), ([0x34, 0x34, 0x34, 0x34, 0x34, 0x34]), ([0x56, 0x56, 0x56, 0x56, 0x56, 0x56]))
-        self.ieee802_11_mac_0 = ieee802_11.mac(([0x23, 0x23, 0x23, 0x23, 0x23, 0x23]), ([0x42, 0x42, 0x42, 0x42, 0x42, 0x42]), ([0xff, 0xff, 0xff, 0xff, 0xff, 0xff]))
+        self.ieee802_11_mac_0_0 = ieee802_11.mac([0x12, 0x12, 0x12, 0x12, 0x12, 0x12], [0x34, 0x34, 0x34, 0x34, 0x34, 0x34], [0x56, 0x56, 0x56, 0x56, 0x56, 0x56])
+        self.ieee802_11_mac_0 = ieee802_11.mac([0x23, 0x23, 0x23, 0x23, 0x23, 0x23], [0x42, 0x42, 0x42, 0x42, 0x42, 0x42], [0xff, 0xff, 0xff, 0xff, 0xff, 0xff])
         self.foo_wireshark_connector_0 = foo.wireshark_connector(127, False)
         self.foo_random_periodic_msg_source_0_0 = foo.random_periodic_msg_source(ieee802_11.mac_payload_to_payload(size), interval, messages, True, False, repetition+123)
         self.foo_random_periodic_msg_source_0 = foo.random_periodic_msg_source(ieee802_11.mac_payload_to_payload(size), interval, messages, True, False, repetition+4242)
         self.foo_packet_pad2_0_0_0 = foo.packet_pad2(False, False, 0.001, 4000, 5000)
-        (self.foo_packet_pad2_0_0_0).set_min_output_buffer(960000)
+        self.foo_packet_pad2_0_0_0.set_min_output_buffer(960000)
         self.foo_packet_pad2_0_0 = foo.packet_pad2(False, False, 0.001, 4000, 5000)
-        (self.foo_packet_pad2_0_0).set_min_output_buffer(960000)
+        self.foo_packet_pad2_0_0.set_min_output_buffer(960000)
         self.foo_packet_pad2_0 = foo.packet_pad2(False, False, 0.001, 4000, 5000)
-        (self.foo_packet_pad2_0).set_min_output_buffer(960000)
+        self.foo_packet_pad2_0.set_min_output_buffer(960000)
         self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_gr_complex, 1, ieee802_11.payload_to_samples(ieee802_11.mac_payload_to_payload(size), encoding), "packet_len")
         self.blocks_skiphead_0 = blocks.skiphead(gr.sizeof_gr_complex*1, 2400 + repetition * 4)
-        self.blocks_multiply_const_vxx_2 = blocks.multiply_const_vcc((0, ))
-        self.blocks_multiply_const_vxx_1_1 = blocks.multiply_const_vcc((1 if interference == "noise" else 0, ))
-        self.blocks_multiply_const_vxx_1_0 = blocks.multiply_const_vcc((0.00001, ))
-        self.blocks_multiply_const_vxx_1 = blocks.multiply_const_vcc((1 if interference == "ofdm" else 0, ))
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vcc(((10**(snr/10.0))**.5, ))
+        self.blocks_multiply_const_vxx_2 = blocks.multiply_const_cc(0)
+        self.blocks_multiply_const_vxx_1_1 = blocks.multiply_const_cc(1 if interference == "noise" else 0)
+        self.blocks_multiply_const_vxx_1_0 = blocks.multiply_const_cc(0.00001)
+        self.blocks_multiply_const_vxx_1 = blocks.multiply_const_cc(1 if interference == "ofdm" else 0)
+        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_cc((10**(snr/10.0))**.5)
         self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_char*1, filename, False)
         self.blocks_file_sink_0.set_unbuffered(True)
         self.blocks_add_xx_1 = blocks.add_vcc(1)
@@ -140,16 +143,17 @@ class sim(gr.top_block):
         self.connect((self.wifi_phy_hier_0, 0), (self.foo_packet_pad2_0, 0))
         self.connect((self.wifi_phy_hier_0_0, 0), (self.foo_packet_pad2_0_0, 0))
 
+
     def get_encoding(self):
         return self.encoding
 
     def set_encoding(self, encoding):
         with self._lock:
             self.encoding = encoding
-            self.wifi_phy_hier_0_0.set_encoding(self.encoding)
-            self.wifi_phy_hier_0.set_encoding(self.encoding)
             self.blocks_stream_to_tagged_stream_0.set_packet_len(ieee802_11.payload_to_samples(ieee802_11.mac_payload_to_payload(self.size), self.encoding))
             self.blocks_stream_to_tagged_stream_0.set_packet_len_pmt(ieee802_11.payload_to_samples(ieee802_11.mac_payload_to_payload(self.size), self.encoding))
+            self.wifi_phy_hier_0.set_encoding(self.encoding)
+            self.wifi_phy_hier_0_0.set_encoding(self.encoding)
 
     def get_interference(self):
         return self.interference
@@ -158,8 +162,8 @@ class sim(gr.top_block):
         with self._lock:
             self.interference = interference
             self.set_filename("results/sim_%d_%.1f_%s_.pcap" % (self.repetition, self.snr, self.interference))
-            self.blocks_multiply_const_vxx_1_1.set_k((1 if self.interference == "noise" else 0, ))
-            self.blocks_multiply_const_vxx_1.set_k((1 if self.interference == "ofdm" else 0, ))
+            self.blocks_multiply_const_vxx_1.set_k(1 if self.interference == "ofdm" else 0)
+            self.blocks_multiply_const_vxx_1_1.set_k(1 if self.interference == "noise" else 0)
 
     def get_interval(self):
         return self.interval
@@ -199,7 +203,7 @@ class sim(gr.top_block):
         with self._lock:
             self.snr = snr
             self.set_filename("results/sim_%d_%.1f_%s_.pcap" % (self.repetition, self.snr, self.interference))
-            self.blocks_multiply_const_vxx_0.set_k(((10**(self.snr/10.0))**.5, ))
+            self.blocks_multiply_const_vxx_0.set_k((10**(self.snr/10.0))**.5)
 
     def get_window_size(self):
         return self.window_size
@@ -231,6 +235,7 @@ class sim(gr.top_block):
             self.blocks_file_sink_0.open(self.filename)
 
 
+
 def argument_parser():
     parser = ArgumentParser()
     parser.add_argument(
@@ -240,7 +245,7 @@ def argument_parser():
         "--interference", dest="interference", type=str, default="ofdm",
         help="Set interference [default=%(default)r]")
     parser.add_argument(
-        "--interval", dest="interval", type=eng_float, default=eng_notation.num_to_str(50),
+        "--interval", dest="interval", type=eng_float, default=eng_notation.num_to_str(float(50)),
         help="Set interval [default=%(default)r]")
     parser.add_argument(
         "--messages", dest="messages", type=intx, default=50,
@@ -252,7 +257,7 @@ def argument_parser():
         "--size", dest="size", type=intx, default=546,
         help="Set size [default=%(default)r]")
     parser.add_argument(
-        "--snr", dest="snr", type=eng_float, default=eng_notation.num_to_str(20),
+        "--snr", dest="snr", type=eng_float, default=eng_notation.num_to_str(float(20)),
         help="Set snr [default=%(default)r]")
     return parser
 
@@ -260,9 +265,19 @@ def argument_parser():
 def main(top_block_cls=sim, options=None):
     if options is None:
         options = argument_parser().parse_args()
-
     tb = top_block_cls(encoding=options.encoding, interference=options.interference, interval=options.interval, messages=options.messages, repetition=options.repetition, size=options.size, snr=options.snr)
+
+    def sig_handler(sig=None, frame=None):
+        tb.stop()
+        tb.wait()
+
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, sig_handler)
+    signal.signal(signal.SIGTERM, sig_handler)
+
     tb.start()
+
     tb.wait()
 
 
