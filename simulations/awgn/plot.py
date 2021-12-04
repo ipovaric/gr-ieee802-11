@@ -1,11 +1,13 @@
 import numpy as np
 import pandas as pd
+from pandas.api.types import CategoricalDtype
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 pdr = pd.read_csv('./results/all.csv', sep=';')
 
-pdr['encoding'] = pdr.encoding.astype("category", categories=range(8), ordered=True)
+#pdr['encoding'] = pdr.encoding.astype("category", categories=range(8), ordered=True)
+pdr['encoding'] = pdr.encoding.astype(CategoricalDtype(categories=range(8), ordered=True))
 
 pdr.encoding.cat.categories = [
         "BPSK 1/2", "BPSK 3/4",
