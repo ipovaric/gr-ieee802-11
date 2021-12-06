@@ -441,7 +441,7 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    tag: packet_len
+    tag: pdu_len
     type: complex
   states:
     bus_sink: false

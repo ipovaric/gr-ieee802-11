@@ -20,5 +20,7 @@ a = pdr.groupby(['encoding', 'snr'])
 b = a.agg({'received': np.mean}).reset_index()
 c = b.pivot(index='snr', columns='encoding', values='received')
 c.plot()
+plt.ylabel('Ratio of received packets')
+plt.title('802.11p with AWGN model')
 plt.savefig('pdr.pdf')
 
